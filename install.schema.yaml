@@ -1,15 +1,10 @@
-# This file provides an example/schema for the component.yaml files that exist
+# This file provides an example/schema for the install.yaml files that exist
 # throughout a NEPI Edge SOFTWARE folder hierarchy. Sections are organized as
 # separate YAML 'documents', delineated by --- lines.
 ---
 # Top-level Component Description -- Must come first and be fully populated
 component_name: MY-COMPONENT # Required. All CAPS, no spaces semantics
 version: '1.0.0' # Required. All directories in the hierarchy are individually versioned. Should follow semantic versioning scheme
-release_date: 2020-10-5T09:30:00.0Z # Required. Should be RFC3339 compliant
-description: | # Required
-  This is a fake component. You can add a multi-line description here... it should describe just this level of the hierarchy;
-  Purpose, requirements, etc. are good things to add.
-icon: ./my_component_icon.svg # Required
 ---
 # An instruction sequence provides an ordered list of instructions to be executed on the device for component installation/modification
 # Instructions are executed in order in a sequence. If an instruction fails, all subsequent instructions in that sequence are aborted.
