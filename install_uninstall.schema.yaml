@@ -20,7 +20,7 @@ instruction_sequence:
   # to the permissions owner/group or failure to establish a specified symlink is considered failure of this instruction.
   - file_install:
       source: ./my_favorite_script.py # Required. Path is with respect to the folder in which this component resides
-      destination: /full/path/to/destination/my_favorite_script.py # Required. Strongly suggested to use an absolute path here
+      destination: /full/path/to/destination/my_favorite_script.py # Required, must include filename. Strongly suggested to use an absolute path here
       permissions: '777' # Optional. Standard R/W/X permissions formatted as an octal number string. If not present, will use permissions of source
       owner: my_username # Optional. Can also specify unix user ID as a numeric string. If not present, will use the user account under which nepi_edge_sw_mgr is running
       group: my_user_group # Optional. Can also specify unix group ID as a numeric string. If not present, will use the user account under which nepi_edge_sw_mgr is running
