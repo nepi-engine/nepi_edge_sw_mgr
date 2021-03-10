@@ -99,6 +99,8 @@ class NepiEdgeSwMgr:
             return self.do_file_install(parameters, results_dict, working_dir)
         elif (instruction == 'file_delete'):
             return self.do_file_delete(parameters, results_dict)
+        elif (instruction == 'directory_delete'):
+            return self.do_directory_delete(parameters, results_dict)
         else:
             results_dict['error_msg'] = 'Unknown instruction: ' + instruction
             return False
@@ -164,6 +166,14 @@ class NepiEdgeSwMgr:
     def do_file_delete(self, full_path_filename, results_dict):
         try:
             os.remove(full_path_filename)
+        except Exception as err:
+            results_dict['error_msg'] = str(err)
+            return False
+        return True
+
+    def do_directory_delete(self, full_path, results_dict):
+        try:
+            os.rmdir(full_path)
         except Exception as err:
             results_dict['error_msg'] = str(err)
             return False

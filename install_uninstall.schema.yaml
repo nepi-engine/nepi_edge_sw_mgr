@@ -29,6 +29,10 @@ instruction_sequence:
   # file_delete removes a file from the filesystem. Non-existence of the file or insufficient permissions result in instruction failure
   # Typically, file_delete is part of an uninstall.yaml file, but can be included in install.yaml if required during component installation
   - file_delete: /path/to/a/file/to/be/deleted.txt
+
+  # directory_delete removes an entire directory from the filesystem. Non-existence of the directory or insufficient permissions result in instruction failure
+  # Typically, directory_delete is part of an uninstall.yaml file, but can be included in install.yaml if required during component installation
+  - directory_delete: /path/to/a/directory/to/be/deleted
 ---
 # A single component.yaml file may contain multiple instruction_sequences. This can be helpful to separate
 # sets of instructions that should not be aborted on failure of an instruction in a different sequence
