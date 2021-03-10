@@ -37,7 +37,7 @@ class NepiEdgeSwMgr:
         #print(self.results_list)
         output_file = os.path.join(self.results_path, 'sw_update_status.yaml')
         with open(output_file, 'w') as f:
-            yaml.dump_all(self.results_list, f)
+            yaml.dump_all(self.results_list, f, sort_keys=False)
 
     def process_component(self, f_path):
         with open(f_path, 'r') as f:
