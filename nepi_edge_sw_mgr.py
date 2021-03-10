@@ -8,7 +8,8 @@ import argparse
 
 class NepiEdgeSwMgr:
     # Class Constants
-    COMPONENT_FILENAME = 'component.yaml'
+    INSTALL_FILENAME = 'install.yaml'
+    UNINSTALL_FILENAME = 'uninstall.yaml'
 
     def __init__(self):
         self.results_list = []
@@ -27,7 +28,7 @@ class NepiEdgeSwMgr:
              'dry_run': self.dry_run})
         for (root,dirs,files) in os.walk(sw_folder_path, topdown=True):
             for f in files:
-                if (f != self.COMPONENT_FILENAME): # Skip everything but component.yaml
+                if (f != self.INSTALL_FILENAME and f != self.UNINSTALL_FILENAME): # Skip everything but install/uninstall.yaml
                     continue
                 f_path = os.path.join(root, f)
                 self.process_component(f_path)
@@ -59,14 +60,18 @@ class NepiEdgeSwMgr:
                 if (is_header_doc):
                     # Process the 'header' document by copying some of its fields to the results for this component
                     header_doc = doc
-                    if 'component_name' in doc:
+                    if 'component_name' in doc and 'version' in doc:
                         component_results_dict['component_name'] = header_doc['component_name']
                     else:
-                        component_results_dict['component_name'] = ''
+                        component_results_dict['component_name'] = 'NOT SET'
+                        component_results_dict['results'] = ({'result':'failure', 'error_msg':'Invalid Component Name... component aborted'})
+                        return
                     if 'version' in header_doc:
                         component_results_dict['version'] = header_doc['version']
                     else:
-                        component_results_dict['version'] = ''
+                        component_results_dict['version'] = 'NOT SET'
+                        component_results_dict['results'] = ({'result':'failure', 'error_msg':'Invalid Version... component aborted'})
+                        return
                     is_header_doc = False
                 else:
                     if 'instruction_sequence' in doc:
@@ -158,7 +163,7 @@ class NepiEdgeSwMgr:
 
     def do_file_delete(self, full_path_filename, results_dict):
         try:
-            os.path.remove(full_path_filename)
+            os.remove(full_path_filename)
         except Exception as err:
             results_dict['error_msg'] = str(err)
             return False

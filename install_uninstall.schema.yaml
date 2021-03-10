@@ -1,5 +1,5 @@
-# This file provides an example/schema for the install.yaml files that exist
-# throughout a NEPI Edge SOFTWARE folder hierarchy. Sections are organized as
+# This file provides an example/schema for the install.yaml and uninstall.yaml files
+# that exist throughout a NEPI Edge SOFTWARE folder hierarchy. Sections are organized as
 # separate YAML 'documents', delineated by --- lines.
 ---
 # Top-level Component Description -- Must come first and be fully populated
@@ -15,6 +15,7 @@ instruction_sequence:
   - dependency_check:
     - /full/path/to/first/dependency.txt
     - /full/path/to/second/dependency.bin
+
   # file_install copies a file to the specified location on the device filesystem. Failure of the initial copy or failure of any modification
   # to the permissions owner/group or failure to establish a specified symlink is considered failure of this instruction.
   - file_install:
@@ -24,7 +25,9 @@ instruction_sequence:
       owner: my_username # Optional. Can also specify unix user ID as a numeric string. If not present, will use the user account under which nepi_edge_sw_mgr is running
       group: my_user_group # Optional. Can also specify unix group ID as a numeric string. If not present, will use the user account under which nepi_edge_sw_mgr is running
       symlink: /full/path/to/symbolic/link/destination # Optional. Will create a symbolic link to the destination file
+
   # file_delete removes a file from the filesystem. Non-existence of the file or insufficient permissions result in instruction failure
+  # Typically, file_delete is part of an uninstall.yaml file, but can be included in install.yaml if required during component installation
   - file_delete: /path/to/a/file/to/be/deleted.txt
 ---
 # A single component.yaml file may contain multiple instruction_sequences. This can be helpful to separate
