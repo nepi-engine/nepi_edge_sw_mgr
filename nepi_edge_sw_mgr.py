@@ -27,6 +27,10 @@ class NepiEdgeSwMgr:
              'output_folder':self.results_path,
              'dry_run': self.dry_run})
         for (root,dirs,files) in os.walk(sw_folder_path, topdown=True):
+            # A directory called Prenstall should be processed first if it exists... we reorder dirs in place to make sure that happens.
+            if 'Preinstall' in dirs:
+                dirs.insert(0, dirs.pop(dirs.index('Preinstall'))) # Clever way to push it to the front
+
             for f in files:
                 if (f != self.INSTALL_FILENAME and f != self.UNINSTALL_FILENAME): # Skip everything but install/uninstall.yaml
                     continue
