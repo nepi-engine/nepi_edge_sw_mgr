@@ -20,7 +20,7 @@ class NepiEdgeSwMgr:
         self.results_path=results_path
         self.dry_run = dry_run
         self.results_list.clear()
-
+        did_something = False
         self.results_list.append(
             {'device_timestamp':datetime.datetime.now().isoformat('T'),
              'input_folder':sw_folder_path,
@@ -35,21 +35,30 @@ class NepiEdgeSwMgr:
                 if (f != self.INSTALL_FILENAME and f != self.UNINSTALL_FILENAME): # Skip everything but install/uninstall.yaml
                     continue
                 f_path = os.path.join(root, f)
-                self.process_component(f_path)
+                if (self.process_component(f_path) is True) and (self.dry_run is False):
+                    did_something = True
+
 
         # Dump the results
         #print(self.results_list)
+
+        # Only generate a file if we actually did something -- file existence is used as an indicator downstream, so delete it
+        # if there is nothing to report
         output_file = os.path.join(self.results_path, 'sw_update_status.yaml')
-        with open(output_file, 'w') as f:
-            yaml.dump_all(self.results_list, f, sort_keys=False)
+        if (True == os.path.isfile(output_file)):
+            os.remove(output_file)
+        if did_something is True:
+            with open(output_file, 'w') as f:
+                yaml.dump_all(self.results_list, f, sort_keys=False)
 
     def process_component(self, f_path):
+        some_instruction_executed = False
         with open(f_path, 'r') as f:
             #print(component_results_dict)
             yaml_docs = list(yaml.load_all(f, Loader=yaml.FullLoader))
             if not yaml_docs: # Empty document for some reason -- just skip it
                 #print('Empty Component: ' + f_path + ' (' + str(doc_count) + ')')
-                return
+                return False # Indicate nothing executed
 
             # Create a new results dictionary for this component.
             self.results_list.append({'path':os.path.dirname(f_path)})
@@ -86,6 +95,7 @@ class NepiEdgeSwMgr:
                                 instruction_results_dict['type'] = instruction
                                 # Process instructions as long as the previous instruction was successful
                                 if (True == last_instruction_success):
+                                    some_instruction_executed = True
                                     last_instruction_success = self.process_instruction(instruction, instruction_dict[instruction], instruction_results_dict, os.path.dirname(f_path))
                                     instruction_results_dict['result'] = 'success' if True == last_instruction_success else 'failure'
                                 else:
@@ -94,6 +104,7 @@ class NepiEdgeSwMgr:
 
                 if instruction_seq_results_list:
                     component_results_dict['results'] = instruction_seq_results_list
+        return some_instruction_executed # Indicate something was actually done
 
     def process_instruction(self, instruction, parameters, results_dict, working_dir):
         # Basically just a big jump table
